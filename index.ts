@@ -15,85 +15,52 @@ enum Tile {
 }
 
 interface Input {
-  handle(): void;
   isRight(): boolean;
   isLeft(): boolean;
   isUp(): boolean;
   isDown(): boolean;
+  handle(): void;
 }
 
 class Right implements Input {
+  isRight() { return true; }
+  isLeft() { return false; }
+  isUp() { return false; }
+  isDown() { return false; }
   handle() {
     moveHorizontal(1);
-  }
-  isRight(): boolean {
-    return true;
-  }
-  isLeft(): boolean {
-    return false;
-  }
-  isUp(): boolean {
-    return false;
-  }
-  isDown(): boolean {
-    return false;
   }
 }
 
 class Left implements Input {
+  isRight() { return false; }
+  isLeft() { return true; }
+  isUp() { return false; }
+  isDown() { return false; }
   handle() {
     moveHorizontal(-1);
-  }
-  isRight(): boolean {
-    return false;
-  }
-  isLeft(): boolean {
-    return true;
-  }
-  isUp(): boolean {
-    return false;
-  }
-  isDown(): boolean {
-    return false;
   }
 }
 
 class Up implements Input {
+  isRight() { return false; }
+  isLeft() { return false; }
+  isUp() { return true; }
+  isDown() { return false; }
   handle() {
     moveVertical(-1);
-  }
-  isRight(): boolean {
-    return false;
-  }
-  isLeft(): boolean {
-    return false;
-  }
-  isUp(): boolean {
-    return true;
-  }
-  isDown(): boolean {
-    return false;
   }
 }
 
 class Down implements Input {
+  isRight() { return false; }
+  isLeft() { return false; }
+  isUp() { return false; }
+  isDown() { return true; }
   handle() {
     moveVertical(1);
   }
-  isRight(): boolean {
-    return false;
-  }
-  isLeft(): boolean {
-    return false;
-  }
-  isUp(): boolean {
-    return false;
-  }
-  isDown(): boolean {
-    return true;
-  }
 }
-
 
 let playerx = 1;
 let playery = 1;
