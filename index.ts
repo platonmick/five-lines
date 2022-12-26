@@ -93,14 +93,14 @@ function handleInputs() {
 }
 
 function handleInput(input: Input) {
-  if (input === Input.LEFT)
-    moveHorizontal(-1);
-  else if (input === Input.RIGHT)
+  if (input === Input.RIGHT)
     moveHorizontal(1);
-  else if (input === Input.UP)
-    moveVertical(-1);
+  else if (input === Input.LEFT)
+    moveHorizontal(-1);
   else if (input === Input.DOWN)
     moveVertical(1);
+  else if (input === Input.UP)
+    moveVertical(-1);
 }
 
 function updateMap() {
