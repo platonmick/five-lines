@@ -119,12 +119,6 @@ function updateMap() {
   }
 }
 
-function draw() {
-  let g = createGraphics();
-  drawMap(g);
-  drawPlayer(g);
-}
-
 function createGraphics() {
   let canvas = document.getElementById("GameCanvas") as HTMLCanvasElement;
   let g = canvas.getContext("2d");
@@ -132,7 +126,13 @@ function createGraphics() {
   return g;
 }
 
-function drawMap(g: CanvasRenderingContext2D ) {
+function draw() {
+  let g = createGraphics();
+  drawMap(g);
+  drawPlayer(g);
+}
+
+function drawMap(g: CanvasRenderingContext2D) {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
       if (map[y][x] === Tile.FLUX)
