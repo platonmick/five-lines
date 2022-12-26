@@ -15,6 +15,7 @@ enum Tile {
 }
 
 interface Input {
+  handle(): void;
   isRight(): boolean;
   isLeft(): boolean;
   isUp(): boolean;
@@ -22,6 +23,9 @@ interface Input {
 }
 
 class Right implements Input {
+  handle() {
+    moveHorizontal(1);
+  }
   isRight(): boolean {
     return true;
   }
@@ -37,6 +41,9 @@ class Right implements Input {
 }
 
 class Left implements Input {
+  handle() {
+    moveHorizontal(-1);
+  }
   isRight(): boolean {
     return false;
   }
@@ -52,6 +59,9 @@ class Left implements Input {
 }
 
 class Up implements Input {
+  handle() {
+    moveVertical(-1);
+  }
   isRight(): boolean {
     return false;
   }
@@ -67,6 +77,9 @@ class Up implements Input {
 }
 
 class Down implements Input {
+  handle() {
+    moveVertical(1);
+  }
   isRight(): boolean {
     return false;
   }
@@ -157,14 +170,7 @@ function handleInputs() {
 }
 
 function handleInput(input: Input) {
-  if (input.isRight())
-    moveHorizontal(1);
-  else if (input.isLeft())
-    moveHorizontal(-1);
-  else if (input.isDown())
-    moveVertical(1);
-  else if (input.isUp())
-    moveVertical(-1);
+  input.handle();
 }
 
 function updateMap() {
