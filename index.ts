@@ -21,7 +21,6 @@ interface Tile {
   draw(g: CanvasRenderingContext2D, x: number, y: number): void;
   moveHorizontal(dx: number): void;
   moveVertical(dy: number): void;
-  canFall(): boolean;
   update(x: number, y: number): void;
 }
 
@@ -36,7 +35,6 @@ class Air implements Tile {
   moveVertical(dy: number) {
     moveToTile(playerx, playery + dy);
   }
-  canFall() { return false; }
   update(x: number, y: number) {}
 }
 
@@ -54,7 +52,6 @@ class Flux implements Tile {
   moveVertical(dy: number) {
     moveToTile(playerx, playery + dy);
   }
-  canFall() { return false; }
   update(x: number, y: number) {}
 }
 
@@ -68,7 +65,6 @@ class Unbreakable implements Tile {
   }
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
-  canFall() { return false; }
   update(x: number, y: number) {}
 }
 
@@ -79,7 +75,6 @@ class Player implements Tile {
   draw(g: CanvasRenderingContext2D, x: number, y: number) {}
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
-  canFall() { return false; }
   update(x: number, y: number) {}
 }
 
@@ -119,7 +114,6 @@ class Stone implements Tile {
     this.fallStrategy.getFalling().moveHorizontal(this, dx);
   }
   moveVertical(dy: number) {}
-  canFall() { return true; }
   update(x: number, y: number) {
     this.fallStrategy.update(this, x, y);
   }
@@ -141,7 +135,6 @@ class Box implements Tile {
     this.fallStrategy.getFalling().moveHorizontal(this, dx);
   }
   moveVertical(dy: number) {}
-  canFall() { return true; }
   update(x: number, y: number) {
     this.fallStrategy.update(this, x, y);
   }
@@ -163,7 +156,6 @@ class Key1 implements Tile {
     removeLock1();
     moveToTile(playerx, playery + dy);
   }
-  canFall() { return false; }
   update(x: number, y: number) {}
 }
 
@@ -177,7 +169,6 @@ class Lock1 implements Tile {
   }
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
-  canFall() { return false; }
   update(x: number, y: number) {}
 }
 
@@ -197,7 +188,6 @@ class Key2 implements Tile {
     removeLock2();
     moveToTile(playerx, playery + dy);
   }
-  canFall() { return false; }
   update(x: number, y: number) {}
 }
 
@@ -211,7 +201,6 @@ class Lock2 implements Tile {
   }
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
-  canFall() { return false; }
   update(x: number, y: number) {}
 }
 
