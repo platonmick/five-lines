@@ -14,27 +14,6 @@ enum RawTile {
   KEY2, LOCK2
 }
 
-interface FallingState {
-  isFalling(): boolean;
-  moveHorizontal(tile: Tile, dx: number): void;
-}
-
-class Falling implements FallingState {
-  isFalling() { return true; }
-  moveHorizontal(tile: Tile, dx: number) {}
-}
-
-class Resting implements FallingState {
-  isFalling() { return false; }
-  moveHorizontal(tile: Tile, dx: number) {
-    if (map[playery][playerx + dx + dx].isAir() &&
-      !map[playery + 1][playerx + dx].isAir()) {
-      map[playery][playerx + dx + dx] = tile;
-      moveToTile(playerx + dx, playery);
-    }
-  }  
-}
-
 interface Tile {
   isAir(): boolean;
   isFallingStone(): boolean;
@@ -114,10 +93,30 @@ class Player implements Tile {
   isBoxy() { return false; }
 }
 
-class Stone implements Tile {
-  constructor(private falling: FallingState) {
-    this.falling = falling;
+interface FallingState {
+  isFalling(): boolean;
+  moveHorizontal(tile: Tile, dx: number): void;
+}
+
+class Falling implements FallingState {
+  isFalling() { return true; }
+  moveHorizontal(tile: Tile, dx: number) {
   }
+}
+
+class Resting implements FallingState {
+  isFalling() { return false; }
+  moveHorizontal(tile: Tile, dx: number) {
+    if (map[playery][playerx + dx + dx].isAir()
+      && !map[playery + 1][playerx + dx].isAir()) {
+      map[playery][playerx + dx + dx] = tile;
+      moveToTile(playerx + dx, playery);
+    }
+  }  
+}
+
+class Stone implements Tile {
+  constructor(private falling: FallingState) {}
   isAir() { return false; }
   isFallingStone() { return this.falling.isFalling(); }
   isFallingBox() { return false; }
@@ -136,9 +135,7 @@ class Stone implements Tile {
 }
 
 class Box implements Tile {
-  constructor(private falling: FallingState) {
-    this.falling = falling;
-  }
+  constructor(private falling: FallingState) {}
   isAir() { return false; }
   isFallingStone() { return false; }
   isFallingBox() { return this.falling.isFalling(); }
@@ -362,11 +359,11 @@ function updateMap() {
 }
 
 function updateTile(x: number, y: number) {
-  if ((map[y][x].isStony())
+  if (map[y][x].isStony()
     && map[y + 1][x].isAir()) {
     map[y + 1][x] = new Stone(new Falling());
     map[y][x] = new Air();
-  } else if ((map[y][x].isBoxy())
+  } else if (map[y][x].isBoxy()
     && map[y + 1][x].isAir()) {
     map[y + 1][x] = new Box(new Falling());
     map[y][x] = new Air();
