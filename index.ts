@@ -17,16 +17,25 @@ enum RawTile {
 interface FallingState {
   isFalling(): boolean;
   isResting(): boolean;
+  moveHorizontal(tile: Tile, dx: number): void;
 }
 
 class Falling implements FallingState {
   isFalling() { return true; }
   isResting() { return false; }
+  moveHorizontal(tile: Tile, dx: number) {}
 }
 
 class Resting implements FallingState {
   isFalling() { return false; }
   isResting() { return true; }
+  moveHorizontal(tile: Tile, dx: number) {
+    if (map[playery][playerx + dx + dx].isAir() &&
+      !map[playery + 1][playerx + dx].isAir()) {
+      map[playery][playerx + dx + dx] = tile;
+      moveToTile(playerx + dx, playery);
+    }
+  }  
 }
 
 interface Tile {
@@ -122,13 +131,7 @@ class Stone implements Tile {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-    if (this.falling.isResting()) {
-      if (map[playery][playerx + dx + dx].isAir() &&
-        !map[playery + 1][playerx + dx].isAir()) {
-        map[playery][playerx + dx + dx] = this;
-        moveToTile(playerx + dx, playery);
-      }
-    }  
+    this.falling.moveHorizontal(this, dx);
   }
   moveVertical(dy: number) {}
   isStony() { return true; }
@@ -149,13 +152,7 @@ class Box implements Tile {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-    if (this.falling.isResting()) {
-          if (map[playery][playerx + dx + dx].isAir()
-            && !map[playery + 1][playerx + dx].isAir()) {
-            map[playery][playerx + dx + dx] = this;
-            moveToTile(playerx + dx, playery);
-          }
-    }  
+    this.falling.moveHorizontal(this, dx);
   }
   moveVertical(dy: number) {}
   isStony() { return false; }
