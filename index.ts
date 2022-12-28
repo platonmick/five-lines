@@ -82,11 +82,13 @@ interface FallingState {
   isFalling(): boolean;
   moveHorizontal(tile: Tile, dx: number): void;
 }
+
 class Falling implements FallingState {
   isFalling() { return true; }
   moveHorizontal(tile: Tile, dx: number) {
   }
 }
+
 class Resting implements FallingState {
   isFalling() { return false; }
   moveHorizontal(tile: Tile, dx: number) {
@@ -219,7 +221,6 @@ class FallStrategy {
       map[y][x] = new Air();
     }
   }
-
 }
 
 interface Input {
@@ -281,6 +282,7 @@ function transformTile(tile: RawTile) {
     default: assertExhausted(tile);
   }
 }
+
 function transformMap() {
   map = new Array(rawMap.length);
   for (let y = 0; y < rawMap.length; y++) {
@@ -302,6 +304,7 @@ function removeLock1() {
     }
   }
 }
+
 function removeLock2() {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
