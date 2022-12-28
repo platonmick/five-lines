@@ -107,13 +107,11 @@ interface FallingState {
   isFalling(): boolean;
   moveHorizontal(tile: Tile, dx: number): void;
 }
-
 class Falling implements FallingState {
   isFalling() { return true; }
   moveHorizontal(tile: Tile, dx: number) {
   }
 }
-
 class Resting implements FallingState {
   isFalling() { return false; }
   moveHorizontal(tile: Tile, dx: number) {
@@ -124,7 +122,6 @@ class Resting implements FallingState {
     }
   }  
 }
-
 class Stone implements Tile {
   constructor(private falling: FallingState) {}
   isAir() { return false; }
@@ -289,12 +286,10 @@ let rawMap: RawTile[][] = [
   [2, 4, 1, 1, 1, 9, 0, 2],
   [2, 2, 2, 2, 2, 2, 2, 2],
 ];
-
 let map: Tile[][];
 function assertExhausted(x: never): never {
   throw new Error("Unexpected object: " + x);
 }
-
 function transformTile(tile: RawTile) {
   switch (tile) {
     case RawTile.AIR: return new Air();
@@ -312,7 +307,6 @@ function transformTile(tile: RawTile) {
     default: assertExhausted(tile);
   }
 }
-
 function transformMap() {
   map = new Array(rawMap.length);
   for (let y = 0; y < rawMap.length; y++) {
@@ -334,7 +328,6 @@ function removeLock1() {
     }
   }
 }
-
 function removeLock2() {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
@@ -381,7 +374,8 @@ function updateMap() {
 }
 
 function updateTile(x: number, y: number) {
-  if (map[y][x].canFall() && map[y + 1][x].isAir()) {
+  if (map[y][x].canFall() 
+    && map[y + 1][x].isAir()) {
       map[y][x].drop();
       map[y + 1][x] = map[y][x];
       map[y][x] = new Air();
