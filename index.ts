@@ -276,13 +276,13 @@ function assertExhausted(x: never): never {
 function transformTile(tile: RawTile) {
   switch (tile) {
     case RawTile.AIR: return new Air();
-    case RawTile.FLUX: return new Flux();
-    case RawTile.UNBREAKABLE: return new Unbreakable();
     case RawTile.PLAYER: return new Player();
+    case RawTile.UNBREAKABLE: return new Unbreakable();
     case RawTile.STONE: return new Stone(new Resting()); 
     case RawTile.FALLING_STONE: return new Stone(new Falling());
     case RawTile.BOX: return new Box(new Resting()); 
     case RawTile.FALLING_BOX: return new Box(new Falling());
+    case RawTile.FLUX: return new Flux();
     case RawTile.KEY1: return new Key1(); 
     case RawTile.LOCK1: return new Lock1();
     case RawTile.KEY2: return new Key2(); 
