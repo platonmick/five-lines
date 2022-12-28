@@ -16,22 +16,20 @@ enum RawTile {
 
 interface Tile {
   isAir(): boolean;
-  isStone(): boolean;
   isFallingStone(): boolean;
-  isBox(): boolean;
   isFallingBox(): boolean;
   isLock1(): boolean;
   isLock2(): boolean;
   draw(g: CanvasRenderingContext2D, x: number, y: number): void;
   moveHorizontal(dx: number): void;
   moveVertical(dy: number): void;
+  isStony(): boolean;
+  isBoxy(): boolean;
 }
 
 class Air implements Tile {
   isAir() { return true; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -42,13 +40,13 @@ class Air implements Tile {
   moveVertical(dy: number) {
     moveToTile(playerx, playery + dy);
   }
+  isStony() { return false; }
+  isBoxy() { return false; }
 }
 
 class Flux implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -62,13 +60,13 @@ class Flux implements Tile {
   moveVertical(dy: number) {
     moveToTile(playerx, playery + dy);
   }
+  isStony() { return false; }
+  isBoxy() { return false; }
 }
 
 class Unbreakable implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -78,26 +76,26 @@ class Unbreakable implements Tile {
   }
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
+  isStony() { return false; }
+  isBoxy() { return false; }
 }
 
 class Player implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {}
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
+  isStony() { return false; }
+  isBoxy() { return false; }
 }
 
 class Stone implements Tile {
   isAir() { return false; }
-  isStone() { return true; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -113,13 +111,13 @@ class Stone implements Tile {
     }  
   }
   moveVertical(dy: number) {}
+  isStony() { return true; }
+  isBoxy() { return false; }
 }
 
 class FallingStone implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return true; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -129,13 +127,13 @@ class FallingStone implements Tile {
   }
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
+  isStony() { return true; }
+  isBoxy() { return false; }
 }
 
 class Box implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return true; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -151,13 +149,13 @@ class Box implements Tile {
     }
   }
   moveVertical(dy: number) {}
+  isStony() { return false; }
+  isBoxy() { return true; }
 }
 
 class FallingBox implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return true; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -167,13 +165,13 @@ class FallingBox implements Tile {
   }
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
+  isStony() { return false; }
+  isBoxy() { return true; }
 }
 
 class Key1 implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -189,13 +187,13 @@ class Key1 implements Tile {
     removeLock1();
     moveToTile(playerx, playery + dy);
   }
+  isStony() { return false; }
+  isBoxy() { return false; }
 }
 
 class Lock1 implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return true; }
   isLock2() { return false; }
@@ -205,13 +203,13 @@ class Lock1 implements Tile {
   }
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
+  isStony() { return false; }
+  isBoxy() { return false; }
 }
 
 class Key2 implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -227,13 +225,13 @@ class Key2 implements Tile {
     removeLock2();
     moveToTile(playerx, playery + dy);
   }
+  isStony() { return false; }
+  isBoxy() { return false; }
 }
 
 class Lock2 implements Tile {
   isAir() { return false; }
-  isStone() { return false; }
   isFallingStone() { return false; }
-  isBox() { return false; }
   isFallingBox() { return false; }
   isLock1() { return false; }
   isLock2() { return true; }
@@ -243,6 +241,8 @@ class Lock2 implements Tile {
   }
   moveHorizontal(dx: number) {}
   moveVertical(dy: number) {}
+  isStony() { return false; }
+  isBoxy() { return false; }
 }
 
 interface Input {
@@ -375,11 +375,11 @@ function updateMap() {
 }
 
 function updateTile(x: number, y: number) {
-  if ((map[y][x].isStone() || map[y][x].isFallingStone())
+  if ((map[y][x].isStony())
     && map[y + 1][x].isAir()) {
     map[y + 1][x] = new FallingStone();
     map[y][x] = new Air();
-  } else if ((map[y][x].isBox() || map[y][x].isFallingBox())
+  } else if ((map[y][x].isBoxy())
     && map[y + 1][x].isAir()) {
     map[y + 1][x] = new FallingBox();
     map[y][x] = new Air();
