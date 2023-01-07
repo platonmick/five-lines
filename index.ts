@@ -1,7 +1,10 @@
+namespace game {
 
 const TILE_SIZE = 30;
 const FPS = 30;
 const SLEEP = 1000 / FPS;
+const color1 = "#ffcc00";
+const color2 = "#00ccff";
 
 enum RawTile {
   AIR,
@@ -159,17 +162,19 @@ class Box implements Tile {
   }
 }
 
-class Key1 implements Tile {
-  private removeStrategy: RemoveStrategy;
-  constructor() {
-    this.removeStrategy = new RemoveLock1();
+class Key implements Tile {
+  constructor(
+    private color: string,
+    private removeStrategy: RemoveStrategy)
+  {
+    this.color = color;
+    this.removeStrategy = removeStrategy;
   }
-
   isAir() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
-    g.fillStyle = "#ffcc00";
+    g.fillStyle = this.color;
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
@@ -183,48 +188,16 @@ class Key1 implements Tile {
   update(x: number, y: number) {}
 }
 
-class Lock1 implements Tile {
-  isAir() { return false; }
-  isLock1() { return true; }
-  isLock2() { return false; }
-  draw(g: CanvasRenderingContext2D, x: number, y: number) {
-    g.fillStyle = "#ffcc00";
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-  }
-  moveHorizontal(dx: number) {}
-  moveVertical(dy: number) {}
-  update(x: number, y: number) {}
-}
-
-class Key2 implements Tile {
-  private removeStrategy: RemoveStrategy;
-  constructor() {
-    this.removeStrategy = new RemoveLock2();
+class Lock implements Tile {
+  constructor(
+    private color: string) {
+    this.color = color;
   }
   isAir() { return false; }
-  isLock1() { return false; }
-  isLock2() { return false; }
+  isLock1() { return this.color === color1; }
+  isLock2() { return this.color === color2; }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
-    g.fillStyle = "#00ccff";
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-  }
-  moveHorizontal(dx: number) {
-    remove(this.removeStrategy);
-    moveToTile(playerx + dx, playery);
-  }
-  moveVertical(dy: number) {
-    remove(this.removeStrategy);
-    moveToTile(playerx, playery + dy);
-  }
-  update(x: number, y: number) {}
-}
-
-class Lock2 implements Tile {
-  isAir() { return false; }
-  isLock1() { return false; }
-  isLock2() { return true; }
-  draw(g: CanvasRenderingContext2D, x: number, y: number) {
-    g.fillStyle = "#00ccff";
+    g.fillStyle = this.color;
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {}
@@ -287,6 +260,14 @@ let rawMap: RawTile[][] = [
   [2, 4, 1, 1, 1, 9, 0, 2],
   [2, 2, 2, 2, 2, 2, 2, 2],
 ];
+let rawMap2: RawTile[][] = [
+  [2, 2, 2, 2, 2, 2, 2, 2],
+  [2, 0, 4, 6, 8, 6, 2, 2],
+  [2, 1, 1, 1, 1, 1, 2, 2],
+  [2, 0, 0, 0, 4, 3, 0, 2],
+  [2, 2, 9, 2, 2, 0, 0, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2],
+];
 let map: Tile[][];
 function assertExhausted(x: never): never {
   throw new Error("Unexpected object: " + x);
@@ -301,10 +282,10 @@ function transformTile(tile: RawTile) {
     case RawTile.BOX: return new Box(new Resting()); 
     case RawTile.FALLING_BOX: return new Box(new Falling());
     case RawTile.FLUX: return new Flux();
-    case RawTile.KEY1: return new Key1(); 
-    case RawTile.LOCK1: return new Lock1();
-    case RawTile.KEY2: return new Key2(); 
-    case RawTile.LOCK2: return new Lock2();
+    case RawTile.KEY1: return new Key(color1, new RemoveLock1()); 
+    case RawTile.LOCK1: return new Lock(color1);
+    case RawTile.KEY2: return new Key(color2, new RemoveLock2); 
+    case RawTile.LOCK2: return new Lock(color2);
     default: assertExhausted(tile);
   }
 }
@@ -419,3 +400,4 @@ window.addEventListener("keydown", e => {
   else if (e.key === DOWN_KEY || e.key === "s") inputs.push(new Down());
 });
 
+}
