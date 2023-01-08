@@ -3,8 +3,8 @@ namespace game {
 const TILE_SIZE = 30;
 const FPS = 30;
 const SLEEP = 1000 / FPS;
-const color1 = "#ffcc00";
-const color2 = "#00ccff";
+const color_yellow = "#ffcc00";
+const color_blue = "#00ccff";
 
 enum RawTile {
   AIR,
@@ -162,27 +162,41 @@ class Box implements Tile {
   }
 }
 
-class Key implements Tile {
+class KeyConfiguration {
   constructor(
     private color: string,
-    private removeStrategy: RemoveStrategy)
-  {
-    this.color = color;
-    this.removeStrategy = removeStrategy;
+    private _1: boolean,
+    private removeStrategy: RemoveStrategy) {
+
+    }
+    getColor() {return this.color;}
+    is1() { return this._1}
+    getRemoveStrategy() {
+      return this.removeStrategy;
+    }
+}
+
+const YELLOW_KEY = new KeyConfiguration(color_yellow, true, new RemoveLock1());
+const BLUE_KEY = new KeyConfiguration(color_blue, false, new RemoveLock2());
+
+class Key implements Tile {
+  constructor(
+    private keyConf: KeyConfiguration) {
+    this.keyConf = keyConf;
   }
   isAir() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
-    g.fillStyle = this.color;
+    g.fillStyle = this.keyConf.getColor();
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-    remove(this.removeStrategy);
+    remove(this.keyConf.getRemoveStrategy());
     moveToTile(playerx + dx, playery);
   }
   moveVertical(dy: number) {
-    remove(this.removeStrategy);
+    remove(this.keyConf.getRemoveStrategy());
     moveToTile(playerx, playery + dy);
   }
   update(x: number, y: number) {}
@@ -194,8 +208,8 @@ class Lock implements Tile {
     this.color = color;
   }
   isAir() { return false; }
-  isLock1() { return this.color === color1; }
-  isLock2() { return this.color === color2; }
+  isLock1() { return this.color === color_yellow; }
+  isLock2() { return this.color === color_blue; }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
     g.fillStyle = this.color;
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -282,10 +296,10 @@ function transformTile(tile: RawTile) {
     case RawTile.BOX: return new Box(new Resting()); 
     case RawTile.FALLING_BOX: return new Box(new Falling());
     case RawTile.FLUX: return new Flux();
-    case RawTile.KEY1: return new Key(color1, new RemoveLock1()); 
-    case RawTile.LOCK1: return new Lock(color1);
-    case RawTile.KEY2: return new Key(color2, new RemoveLock2); 
-    case RawTile.LOCK2: return new Lock(color2);
+    case RawTile.KEY1: return new Key(YELLOW_KEY); 
+    case RawTile.LOCK1: return new Lock(color_yellow);
+    case RawTile.KEY2: return new Key(BLUE_KEY); 
+    case RawTile.LOCK2: return new Lock(color_blue);
     default: assertExhausted(tile);
   }
 }
