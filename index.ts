@@ -27,23 +27,6 @@ interface Tile {
   update(x: number, y: number): void;
 }
 
-interface RemoveStrategy {
-  check(tile: Tile): boolean;
-}
-
-class RemoveLock1 implements RemoveStrategy {
-  check(tile: Tile) {
-    return tile.isLock1();
-  }
-}
-
-class RemoveLock2 implements RemoveStrategy {
-  check(tile: Tile) {
-    return tile.isLock2();
-  }
-}
-
-
 class Air implements Tile {
   isAir() { return true; }
   isLock1() { return false; }
@@ -162,28 +145,8 @@ class Box implements Tile {
   }
 }
 
-class KeyConfiguration {
-  constructor(
-    private color: string,
-    private _1: boolean,
-    private removeStrategy: RemoveStrategy) {
-
-    }
-    getColor() {return this.color;}
-    is1() { return this._1}
-    getRemoveStrategy() {
-      return this.removeStrategy;
-    }
-}
-
-const YELLOW_KEY = new KeyConfiguration(color_yellow, true, new RemoveLock1());
-const BLUE_KEY = new KeyConfiguration(color_blue, false, new RemoveLock2());
-
 class Key implements Tile {
-  constructor(
-    private keyConf: KeyConfiguration) {
-    this.keyConf = keyConf;
-  }
+  constructor(private keyConf: KeyConfiguration) { }
   isAir() { return false; }
   isLock1() { return false; }
   isLock2() { return false; }
@@ -203,15 +166,12 @@ class Key implements Tile {
 }
 
 class Lock implements Tile {
-  constructor(
-    private color: string) {
-    this.color = color;
-  }
+  constructor(private keyConf: KeyConfiguration) { }
   isAir() { return false; }
-  isLock1() { return this.color === color_yellow; }
-  isLock2() { return this.color === color_blue; }
+  isLock1() { return this.keyConf.is1(); }
+  isLock2() { return !this.keyConf.is1(); }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
-    g.fillStyle = this.color;
+    g.fillStyle = this.keyConf.getColor();
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {}
@@ -297,9 +257,9 @@ function transformTile(tile: RawTile) {
     case RawTile.FALLING_BOX: return new Box(new Falling());
     case RawTile.FLUX: return new Flux();
     case RawTile.KEY1: return new Key(YELLOW_KEY); 
-    case RawTile.LOCK1: return new Lock(color_yellow);
+    case RawTile.LOCK1: return new Lock(YELLOW_KEY);
     case RawTile.KEY2: return new Key(BLUE_KEY); 
-    case RawTile.LOCK2: return new Lock(color_blue);
+    case RawTile.LOCK2: return new Lock(BLUE_KEY);
     default: assertExhausted(tile);
   }
 }
@@ -326,6 +286,31 @@ function remove(shouldRemove: RemoveStrategy) {
   }
 }
 
+interface RemoveStrategy {
+  check(tile: Tile): boolean;
+}
+
+class RemoveLock1 implements RemoveStrategy {
+  check(tile: Tile) {
+    return tile.isLock1();
+  }
+}
+
+class RemoveLock2 implements RemoveStrategy {
+  check(tile: Tile) {
+    return tile.isLock2();
+  }
+}
+
+class KeyConfiguration {
+  constructor( private color: string, private _1: boolean, private removeStrategy: RemoveStrategy) { }
+  getColor() { return this.color; }
+  is1() { return this._1; }
+  getRemoveStrategy() { return this.removeStrategy; }
+}
+
+const YELLOW_KEY = new KeyConfiguration(color_yellow, true, new RemoveLock1());
+const BLUE_KEY = new KeyConfiguration(color_blue, false, new RemoveLock2());
 
 function moveToTile(newx: number, newy: number) {
   map[playery][playerx] = new Air();
