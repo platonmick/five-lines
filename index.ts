@@ -34,10 +34,10 @@ class Air implements Tile {
   isLock2() { return false; }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {}
   moveHorizontal(player: Player, dx: number) {
-    moveToTile(player.getX() + dx, player.getY());
+    player.move(dx, 0);
   }
   moveVertical(player: Player, dy: number) {
-    moveToTile(player.getX(), player.getY() + dy);
+    player.move(0, dy);
   }
   update(x: number, y: number) {}
   getBlockOnTopState() { return new Falling(); }
@@ -52,10 +52,10 @@ class Flux implements Tile {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(player: Player, dx: number) {
-    moveToTile(player.getX() + dx, player.getY());
+    player.move(dx, 0);
   }
   moveVertical(player: Player, dy: number) {
-    moveToTile(player.getX(), player.getY() + dy);
+    player.move(0, dy);
   }
   update(x: number, y: number) {}
   getBlockOnTopState() { return new Resting(); }
@@ -167,11 +167,11 @@ class Key implements Tile {
   }
   moveHorizontal(player: Player, dx: number) {
     this.keyConf.removeLock();
-    moveToTile(player.getX() + dx, player.getY());
+    player.move(dx, 0);
   }
   moveVertical(player: Player, dy: number) {
     this.keyConf.removeLock();
-    moveToTile(player.getX(), player.getY() + dy);
+    player.move(0, dy);
   }
   update(x: number, y: number) {}
   getBlockOnTopState() { return new Resting(); }
@@ -235,16 +235,12 @@ class Down implements Input {
 class Player {
   private x = 1;
   private y = 1;
-  getX() { return this.x; }
-  getY() { return this.y; }
-  setX(x: number) { this.x = x; }
-  setY(y: number) { this.y = y; }
   draw(g: CanvasRenderingContext2D) {
     g.fillStyle = "#ff0000";
-    g.fillRect(this.getX() * TILE_SIZE, this.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    g.fillRect(this.x * TILE_SIZE, this.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-    map[this.getY()][this.getX() + dx].moveHorizontal(this, dx);
+    map[this.y][this.x + dx].moveHorizontal(this, dx);
   }
   moveVertical(dy: number) {
     map[this.y + dy][this.x].moveVertical(this, dy);
@@ -259,11 +255,11 @@ class Player {
       this.moveToTile(this.x + dx, this.y);
     }
   }
-  moveToTile(newx: number, newy: number) {
-    map[player.getY()][player.getX()] = new Air();
+  private moveToTile(newx: number, newy: number) {
+    map[this.y][this.x] = new Air();
     map[newy][newx] = new PlayerTile();
-    player.setX(newx);
-    player.setY(newy);
+    this.x = newx;
+    this.y = newy;
   }
 }
 let player = new Player();
@@ -360,11 +356,6 @@ class KeyConfiguration {
 
 const YELLOW_KEY = new KeyConfiguration(color_yellow, true, new RemoveLock1());
 const BLUE_KEY = new KeyConfiguration(color_blue, false, new RemoveLock2());
-
-function moveToTile(newx: number, newy: number) {
-  player.moveToTile(newx, newy);
-}
-
 
 function update() {
   handleInputs();
