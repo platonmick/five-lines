@@ -205,29 +205,29 @@ class FallStrategy {
 }
 
 interface Input {
-  handle(): void;
+  handle(player: Player): void;
 }
 
 class Right implements Input {
-  handle() {
+  handle(player: Player) {
     player.moveHorizontal(1);
   }
 }
 
 class Left implements Input {
-  handle() {
+  handle(player: Player) {
     player.moveHorizontal(-1);
   }
 }
 
 class Up implements Input {
-  handle() {
+  handle(player: Player) {
     player.moveVertical(-1);
   }
 }
 
 class Down implements Input {
-  handle() {
+  handle(player: Player) {
     player.moveVertical(1);
   }
 }
@@ -357,15 +357,15 @@ class KeyConfiguration {
 const YELLOW_KEY = new KeyConfiguration(color_yellow, true, new RemoveLock1());
 const BLUE_KEY = new KeyConfiguration(color_blue, false, new RemoveLock2());
 
-function update() {
-  handleInputs();
+function update(player: Player) {
+  handleInputs(player);
   updateMap();
 }
 
-function handleInputs() {
+function handleInputs(player: Player) {
   while (inputs.length > 0) {
     let input = inputs.pop();
-    input.handle();
+    input.handle(player);
   }
 }
 
@@ -384,7 +384,7 @@ function createGraphics() {
   return g;
 }
 
-function draw() {
+function draw(player: Player) {
   let g = createGraphics();
   drawMap(g);
   player.draw(g);
@@ -401,8 +401,8 @@ function drawMap(g: CanvasRenderingContext2D) {
 
 function gameLoop() {
   let before = Date.now();
-  update();
-  draw();
+  update(player);
+  draw(player);
   let after = Date.now();
   let frameTime = after - before;
   let sleep = SLEEP - frameTime;
