@@ -222,13 +222,13 @@ class Left implements Input {
 
 class Up implements Input {
   handle() {
-    moveVertical(player, -1);
+    player.moveVertical(-1);
   }
 }
 
 class Down implements Input {
   handle() {
-    moveVertical(player, 1);
+    player.moveVertical(1);
   }
 }
 
@@ -245,6 +245,9 @@ class Player {
   }
   moveHorizontal(dx: number) {
     map[this.getY()][this.getX() + dx].moveHorizontal(this, dx);
+  }
+  moveVertical(dy: number) {
+    map[this.y + dy][this.x].moveVertical(this, dy);
   }
   move(dx: number, dy: number) {
     this.moveToTile(this.x + dx, this.y + dy);
@@ -362,10 +365,6 @@ function moveToTile(newx: number, newy: number) {
   player.moveToTile(newx, newy);
 }
 
-
-function moveVertical(player: Player, dy: number) {
-  map[player.getY() + dy][player.getX()].moveVertical(player, dy);
-}
 
 function update() {
   handleInputs();
