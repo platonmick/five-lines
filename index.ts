@@ -112,7 +112,8 @@ class Resting implements FallingState {
       moveToTile(playerx + dx, playery);
     }
   }
-  drop(tile: Tile, x : number, y : number) { }
+  drop(tile: Tile, x : number, y : number) {
+  }
 }
 
 class Stone implements Tile {
@@ -315,9 +316,13 @@ class RemoveLock2 implements RemoveStrategy {
 
 class KeyConfiguration {
   constructor( private color: string, private _1: boolean, private removeStrategy: RemoveStrategy) { }
+  setColor(g : CanvasRenderingContext2D) { 
+    g.fillStyle = this.color;
+  }
   is1() { return this._1; }
-  removeLock() { remove(this.removeStrategy); }
-  setColor(g : CanvasRenderingContext2D) { g.fillStyle = this.color; }
+  removeLock() { 
+    remove(this.removeStrategy); 
+  }
   fillRect(g : CanvasRenderingContext2D, x: number, y: number ) {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
