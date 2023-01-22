@@ -106,11 +106,7 @@ class Falling implements FallingState {
 class Resting implements FallingState {
   isFalling() { return false; }
   moveHorizontal(player: Player, tile: Tile, dx: number) {
-    if (map[player.getY()][player.getX() + dx + dx].isAir()
-      && !map[player.getY() + 1][player.getX() + dx].isAir()) {
-      map[player.getY()][player.getX() + dx + dx] = tile;
-      moveToTile(player.getX() + dx, player.getY());
-    }
+    player.pushHorizontal(tile, dx);
   }
   drop(tile: Tile, x : number, y : number) {
   }
@@ -214,13 +210,13 @@ interface Input {
 
 class Right implements Input {
   handle() {
-    moveHorizontal(player, 1);
+    player.moveHorizontal(1);
   }
 }
 
 class Left implements Input {
   handle() {
-    moveHorizontal(player, -1);
+    player.moveHorizontal(-1);
   }
 }
 
@@ -247,7 +243,25 @@ class Player {
     g.fillStyle = "#ff0000";
     g.fillRect(this.getX() * TILE_SIZE, this.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
-  
+  moveHorizontal(dx: number) {
+    map[this.getY()][this.getX() + dx].moveHorizontal(this, dx);
+  }
+  move(dx: number, dy: number) {
+    this.moveToTile(this.x + dx, this.y + dy);
+  }
+  pushHorizontal(tile: Tile, dx: number) {
+    if (map[this.y][this.x + dx + dx].isAir()
+      && !map[this.y + 1][this.x + dx].isAir()) {
+      map[this.y][this.x + dx + dx] = tile;
+      this.moveToTile(this.x + dx, this.y);
+    }
+  }
+  moveToTile(newx: number, newy: number) {
+    map[player.getY()][player.getX()] = new Air();
+    map[newy][newx] = new PlayerTile();
+    player.setX(newx);
+    player.setY(newy);
+  }
 }
 let player = new Player();
 
@@ -345,15 +359,9 @@ const YELLOW_KEY = new KeyConfiguration(color_yellow, true, new RemoveLock1());
 const BLUE_KEY = new KeyConfiguration(color_blue, false, new RemoveLock2());
 
 function moveToTile(newx: number, newy: number) {
-  map[player.getY()][player.getX()] = new Air();
-  map[newy][newx] = new PlayerTile();
-  player.setX(newx);
-  player.setY(newy);
+  player.moveToTile(newx, newy);
 }
 
-function moveHorizontal(player: Player, dx: number) {
-  map[player.getY()][player.getX() + dx].moveHorizontal(player, dx);
-}
 
 function moveVertical(player: Player, dy: number) {
   map[player.getY() + dy][player.getX()].moveVertical(player, dy);
