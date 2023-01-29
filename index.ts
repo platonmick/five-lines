@@ -97,10 +97,8 @@ class Falling implements FallingState {
   moveHorizontal(map: Map, player: Player, tile: Tile, dx: number) {
   }
   drop(map: Map, tile: Tile, x : number, y : number) {
-    map.getMap()[y + 1][x] = tile;
-    map.getMap()[y][x] = new Air();
+    map.drop(tile, x, y);
   }
-
 }
 
 class Resting implements FallingState {
@@ -316,6 +314,11 @@ class Map {
       }
     }
   }
+  drop(tile: Tile, x : number, y : number) {
+    this.map[y + 1][x] = tile;
+    this.map[y][x] = new Air();
+  }
+
 }
 
 function assertExhausted(x: never): never {
