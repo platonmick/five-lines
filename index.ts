@@ -301,8 +301,13 @@ class Map {
       }
     }
   }
-  
-  
+  draw(g: CanvasRenderingContext2D) {
+    for (let y = 0; y < this.getMap().length; y++) {
+      for (let x = 0; x < this.getMap()[y].length; x++) {
+        this.getMap()[y][x].draw(g, x, y);
+      }
+    }
+  }
 }
 
 function assertExhausted(x: never): never {
@@ -392,18 +397,9 @@ function createGraphics() {
 
 function draw(map: Map, player: Player) {
   let g = createGraphics();
-  drawMap(map, g);
+  map.draw(g);
   player.draw(g);
 }
-
-function drawMap(map: Map, g: CanvasRenderingContext2D) {
-  for (let y = 0; y < map.getMap().length; y++) {
-    for (let x = 0; x < map.getMap()[y].length; x++) {
-      map.getMap()[y][x].draw(g, x, y);
-    }
-  }
-}
-
 
 function gameLoop(map: Map) {
   let before = Date.now();
