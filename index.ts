@@ -284,7 +284,6 @@ let rawMap2: RawTile[][] = [
 class Map {
   private map: Tile[][];
   getMap() { return this.map; }
-  setMap(map: Tile[][]) { this.map = map; }
   transform() {
     this.map = new Array(rawMap.length);
     for (let y = 0; y < rawMap.length; y++) {
@@ -302,9 +301,18 @@ class Map {
     }
   }
   draw(g: CanvasRenderingContext2D) {
-    for (let y = 0; y < this.getMap().length; y++) {
-      for (let x = 0; x < this.getMap()[y].length; x++) {
-        this.getMap()[y][x].draw(g, x, y);
+    for (let y = 0; y < this.map.length; y++) {
+      for (let x = 0; x < this.map[y].length; x++) {
+        this.map[y][x].draw(g, x, y);
+      }
+    }
+  }
+  remove(shouldRemove: RemoveStrategy) {
+    for (let y = 0; y < this.map.length; y++) {
+      for (let x = 0; x < this.map[y].length; x++) {
+        if (shouldRemove.check(this.map[y][x])) {
+          this.map[y][x] = new Air();
+        }
       }
     }
   }
@@ -333,16 +341,6 @@ function transformTile(tile: RawTile) {
 
 let inputs: Input[] = [];
 
-function remove(map: Map, shouldRemove: RemoveStrategy) {
-  for (let y = 0; y < map.getMap().length; y++) {
-    for (let x = 0; x < map.getMap()[y].length; x++) {
-      if (shouldRemove.check(map.getMap()[y][x])) {
-        map.getMap()[y][x] = new Air();
-      }
-    }
-  }
-}
-
 interface RemoveStrategy {
   check(tile: Tile): boolean;
 }
@@ -366,7 +364,7 @@ class KeyConfiguration {
   }
   is1() { return this._1; }
   removeLock(map: Map) { 
-    remove(map, this.removeStrategy); 
+    map.remove(this.removeStrategy); 
   }
   fillRect(g : CanvasRenderingContext2D, x: number, y: number ) {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
