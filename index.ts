@@ -284,7 +284,17 @@ let rawMap2: RawTile[][] = [
 class Map {
   private map: Tile[][];
   getMap() { return this.map; }
-  setMap(map: Tile[][]) { this.map = map;}
+  setMap(map: Tile[][]) { this.map = map; }
+  transform() {
+    this.map = new Array(rawMap.length);
+    for (let y = 0; y < rawMap.length; y++) {
+      this.map[y] = new Array(rawMap[y].length);
+      for (let x = 0; x < rawMap[y].length; x++) {
+        this.map[y][x] = transformTile(rawMap[y][x]);
+      }
+    }
+  }
+  
 }
 
 function assertExhausted(x: never): never {
@@ -305,16 +315,6 @@ function transformTile(tile: RawTile) {
     case RawTile.KEY2: return new Key(BLUE_KEY); 
     case RawTile.LOCK2: return new Lock(BLUE_KEY);
     default: assertExhausted(tile);
-  }
-}
-
-function transformMap(map: Map) {
-  map.setMap(new Array(rawMap.length));
-  for (let y = 0; y < rawMap.length; y++) {
-    map.getMap()[y] = new Array(rawMap[y].length);
-    for (let x = 0; x < rawMap[y].length; x++) {
-      map.getMap()[y][x] = transformTile(rawMap[y][x]);
-    }
   }
 }
 
@@ -417,7 +417,7 @@ function gameLoop(map: Map) {
 
 window.onload = () => {
   let map = new Map();
-  transformMap(map);
+  map.transform();
   gameLoop(map);
 }
 
