@@ -238,7 +238,7 @@ class Player {
     g.fillRect(this.x * TILE_SIZE, this.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(map: Map, dx: number) {
-    map.getMap()[this.y][this.x + dx].moveHorizontal(map, this, dx);
+    map.moveHorizontal(this, this.x, this.y, dx);
   }
   moveVertical(map: Map, dy: number) {
     map.getMap()[this.y + dy][this.x].moveVertical(map, this, dy);
@@ -320,6 +320,9 @@ class Map {
   }
   getBlockOnTopState(x: number, y: number): FallingState {
     return this.map[y + 1][x].getBlockOnTopState();
+  }
+  moveHorizontal(player: Player, x: number, y: number, dx: number) {
+    this.map[y][x + dx].moveHorizontal(this, player, dx);
   }
 }
 
