@@ -241,7 +241,7 @@ class Player {
     map.moveHorizontal(this, this.x, this.y, dx);
   }
   moveVertical(map: Map, dy: number) {
-    map.getMap()[this.y + dy][this.x].moveVertical(map, this, dy);
+    map.moveVertical(this, this.x, this.y, dy);
   }
   move(map: Map, dx: number, dy: number) {
     this.moveToTile(map, this.x + dx, this.y + dy);
@@ -324,6 +324,10 @@ class Map {
   moveHorizontal(player: Player, x: number, y: number, dx: number) {
     this.map[y][x + dx].moveHorizontal(this, player, dx);
   }
+  moveVertical(player: Player, x: number, y: number,  dy: number) {
+    this.map[y + dy][x].moveVertical(this, player, dy);
+  }
+
 }
 
 function assertExhausted(x: never): never {
