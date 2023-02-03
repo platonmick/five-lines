@@ -280,7 +280,6 @@ let rawMap2: RawTile[][] = [
 
 class Map {
   private map: Tile[][];
-  private getMap() { return this.map; }
   transform() {
     this.map = new Array(rawMap.length);
     for (let y = 0; y < rawMap.length; y++) {
