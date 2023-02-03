@@ -247,9 +247,9 @@ class Player {
     this.moveToTile(map, this.x + dx, this.y + dy);
   }
   pushHorizontal(map: Map, tile: Tile, dx: number) {
-    if (map.getMap()[this.y][this.x + dx + dx].isAir()
-      && !map.getMap()[this.y + 1][this.x + dx].isAir()) {
-      map.getMap()[this.y][this.x + dx + dx] = tile;
+    if (map.isAir(this.x + dx + dx, this.y)
+      && !map.isAir(this.x + dx, this.y + 1)) {
+      map.setTile(this.x + dx + dx, this.y, tile);
       this.moveToTile(map, this.x + dx, this.y);
     }
   }
@@ -280,7 +280,7 @@ let rawMap2: RawTile[][] = [
 
 class Map {
   private map: Tile[][];
-  getMap() { return this.map; }
+  private getMap() { return this.map; }
   transform() {
     this.map = new Array(rawMap.length);
     for (let y = 0; y < rawMap.length; y++) {
@@ -329,6 +329,12 @@ class Map {
   moveToTile(x: number, y: number, newx: number, newy: number) {
     this.map[y][x] = new Air();
     this.map[newy][newx] = new PlayerTile();
+  }
+  isAir(x: number, y: number) {
+    return this.map[y][x].isAir();
+  }
+  setTile(x: number, y: number, tile: Tile) {
+    this.map[y][x] = tile;
   }
 }
 
