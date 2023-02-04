@@ -194,7 +194,7 @@ class FallStrategy {
   constructor(private falling: FallingState) {}
 
   update(map: Map, tile: Tile, x: number, y: number) {
-    this.falling = map.getBlockOnTopState(x, y);
+    this.falling = map.getBlockOnTopState(x, y + 1);
     this.falling.drop(map, tile, x, y);
   }
   moveHorizontal(map: Map, player: Player, tile: Tile, dx: number) {
@@ -299,6 +299,23 @@ class Map {
       }
     }
   }
+  drop(tile: Tile, x : number, y : number) {
+    this.map[y + 1][x] = tile;
+    this.map[y][x] = new Air();
+  }
+  getBlockOnTopState(x: number, y: number) {
+    return this.map[y][x].getBlockOnTopState();
+  }
+  movePlayer(x: number, y: number, newx: number, newy: number) {
+    this.map[y][x] = new Air();
+    this.map[newy][newx] = new PlayerTile();
+  }
+  moveHorizontal(player: Player, x: number, y: number, dx: number) {
+    this.map[y][x + dx].moveHorizontal(this, player, dx);
+  }
+  moveVertical(player: Player, x: number, y: number,  dy: number) {
+    this.map[y + dy][x].moveVertical(this, player, dy);
+  }
   remove(shouldRemove: RemoveStrategy) {
     for (let y = 0; y < this.map.length; y++) {
       for (let x = 0; x < this.map[y].length; x++) {
@@ -308,39 +325,15 @@ class Map {
       }
     }
   }
-  drop(tile: Tile, x : number, y : number) {
-    this.map[y + 1][x] = tile;
-    this.map[y][x] = new Air();
-  }
-  getBlockOnTopState(x: number, y: number): FallingState {
-    return this.map[y + 1][x].getBlockOnTopState();
-  }
-  moveHorizontal(player: Player, x: number, y: number, dx: number) {
-    this.map[y][x + dx].moveHorizontal(this, player, dx);
-  }
-  moveVertical(player: Player, x: number, y: number,  dy: number) {
-    this.map[y + dy][x].moveVertical(this, player, dy);
-  }
-  movePlayer(x: number, y: number, newx: number, newy: number) {
-    this.map[y][x] = new Air();
-    this.map[newy][newx] = new PlayerTile();
-  }
-  isAir(x: number, y: number) {
-    return this.map[y][x].isAir();
-  }
-  private setTile(x: number, y: number, tile: Tile) {
-    this.map[y][x] = tile;
-  }
   pushHorizontal(player: Player, tile: Tile, x: number, y: number, dx: number) {
-    if (this.isAir(x + dx + dx, y)
-      && !this.isAir(x + dx, y + 1)) {
-      this.setTile(x + dx + dx, y, tile);
+    if (this.map[y][x + dx +dx].isAir()
+      && !this.map[y + 1][x + dx].isAir()) {
+      this.map[y][x + dx + dx] = tile;
       player.moveToTile(this, x + dx, y);
     }
   }
-
 }
-
+let map = new Map();
 function assertExhausted(x: never): never {
   throw new Error("Unexpected object: " + x);
 }
@@ -433,7 +426,6 @@ function gameLoop(map: Map) {
 }
 
 window.onload = () => {
-  let map = new Map();
   map.transform();
   gameLoop(map);
 }
