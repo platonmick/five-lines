@@ -254,7 +254,7 @@ class Player {
     }
   }
   private moveToTile(map: Map, newx: number, newy: number) {
-    map.moveToTile(this.x, this.y, newx, newy);
+    map.movePlayer(this.x, this.y, newx, newy);
     this.x = newx;
     this.y = newy;
   }
@@ -325,7 +325,7 @@ class Map {
   moveVertical(player: Player, x: number, y: number,  dy: number) {
     this.map[y + dy][x].moveVertical(this, player, dy);
   }
-  moveToTile(x: number, y: number, newx: number, newy: number) {
+  movePlayer(x: number, y: number, newx: number, newy: number) {
     this.map[y][x] = new Air();
     this.map[newy][newx] = new PlayerTile();
   }
