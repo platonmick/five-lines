@@ -247,13 +247,9 @@ class Player {
     this.moveToTile(map, this.x + dx, this.y + dy);
   }
   pushHorizontal(map: Map, tile: Tile, dx: number) {
-    if (map.isAir(this.x + dx + dx, this.y)
-      && !map.isAir(this.x + dx, this.y + 1)) {
-      map.setTile(this.x + dx + dx, this.y, tile);
-      this.moveToTile(map, this.x + dx, this.y);
-    }
+    map.pushHorizontal(this, tile, this.x, this.y, dx);
   }
-  private moveToTile(map: Map, newx: number, newy: number) {
+  moveToTile(map: Map, newx: number, newy: number) {
     map.movePlayer(this.x, this.y, newx, newy);
     this.x = newx;
     this.y = newy;
@@ -332,9 +328,17 @@ class Map {
   isAir(x: number, y: number) {
     return this.map[y][x].isAir();
   }
-  setTile(x: number, y: number, tile: Tile) {
+  private setTile(x: number, y: number, tile: Tile) {
     this.map[y][x] = tile;
   }
+  pushHorizontal(player: Player, tile: Tile, x: number, y: number, dx: number) {
+    if (this.isAir(x + dx + dx, y)
+      && !this.isAir(x + dx, y + 1)) {
+      this.setTile(x + dx + dx, y, tile);
+      player.moveToTile(this, x + dx, y);
+    }
+  }
+
 }
 
 function assertExhausted(x: never): never {
