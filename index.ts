@@ -6,69 +6,75 @@ const SLEEP = 1000 / FPS;
 const color_yellow = "#ffcc00";
 const color_blue = "#00ccff";
 
+interface RemoveStrategy {
+  check(tile: Tile): boolean;
+}
+
+class RemoveLock1 implements RemoveStrategy {
+  check(tile: Tile) {
+    return tile.isLock1();
+  }
+}
+
+class RemoveLock2 implements RemoveStrategy {
+  check(tile: Tile) {
+    return tile.isLock2();
+  }
+}
+
+class KeyConfiguration {
+  constructor( private color: string, private _1: boolean, private removeStrategy: RemoveStrategy) { }
+  setColor(g : CanvasRenderingContext2D) { 
+    g.fillStyle = this.color;
+  }
+  is1() { return this._1; }
+  removeLock(map: Map) { 
+    map.remove(this.removeStrategy); 
+  }
+  fillRect(g : CanvasRenderingContext2D, x: number, y: number ) {
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  }
+}
+
 interface RawTileValue {
   transform(): Tile;
  }
 
 class AirValue implements RawTileValue { 
-  transform(): Tile {
-    return new Air();
-  }
+  transform() { return new Air(); }
 }
 class FluxValue implements RawTileValue { 
-  transform(): Tile {
-    return new Flux();
-  }
+  transform() { return new Flux(); }
 }
 class UnbreakableValue implements RawTileValue { 
-  transform() {
-    return new Unbreakable();
-  }
+  transform() { return new Unbreakable(); }
 }
 class PlayerValue implements RawTileValue {
-  transform() {
-    return new PlayerTile();
-  }
+  transform() { return new PlayerTile(); }
 }
 class StoneValue implements RawTileValue {
-  transform() {
-    return new Stone(new Resting()); 
-  }
+  transform() { return new Stone(new Resting()); }
 }
 class FallingStoneValue implements RawTileValue {
-  transform() {
-    return new Stone(new Falling());
-  }
+  transform() { return new Stone(new Falling()); }
 }
 class BoxValue implements RawTileValue {
-  transform() {
-    return new Box(new Resting()); 
-  }
+  transform() { return new Box(new Resting()); }
 }
 class FallingBoxValue implements RawTileValue {
-  transform() {
-    return new Box(new Falling());
-  }
+  transform() { return new Box(new Falling()); }
 }
 class Key1Value implements RawTileValue {
-  transform() {
-    return new Key(YELLOW_KEY); 
-  }
+  transform() { return new Key(YELLOW_KEY); }
 }
 class Lock1Value implements RawTileValue {
-  transform() {
-    return new Lock(YELLOW_KEY);
-  }
+  transform() { return new Lock(YELLOW_KEY); }
 }
 class Key2Value implements RawTileValue {
-  transform() {
-    return new Key(BLUE_KEY); 
-  }
+  transform() { return new Key(BLUE_KEY); }
 }
 class Lock2Value implements RawTileValue {
-  transform() {
-    return new Lock(BLUE_KEY);
-  }
+  transform() { return new Lock(BLUE_KEY); }
 }
 
 class RawTile {
@@ -86,7 +92,7 @@ class RawTile {
   static readonly LOCK2 = new RawTile(new Lock2Value());
 
   private constructor(private value: RawTileValue) { }
-  transform(): Tile {
+  transform() {
     return this.value.transform();
   }
 }
@@ -423,36 +429,6 @@ class Map {
   }
 }
 let inputs: Input[] = [];
-
-interface RemoveStrategy {
-  check(tile: Tile): boolean;
-}
-
-class RemoveLock1 implements RemoveStrategy {
-  check(tile: Tile) {
-    return tile.isLock1();
-  }
-}
-
-class RemoveLock2 implements RemoveStrategy {
-  check(tile: Tile) {
-    return tile.isLock2();
-  }
-}
-
-class KeyConfiguration {
-  constructor( private color: string, private _1: boolean, private removeStrategy: RemoveStrategy) { }
-  setColor(g : CanvasRenderingContext2D) { 
-    g.fillStyle = this.color;
-  }
-  is1() { return this._1; }
-  removeLock(map: Map) { 
-    map.remove(this.removeStrategy); 
-  }
-  fillRect(g : CanvasRenderingContext2D, x: number, y: number ) {
-    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-  }
-}
 
 const YELLOW_KEY = new KeyConfiguration(color_yellow, true, new RemoveLock1());
 const BLUE_KEY = new KeyConfiguration(color_blue, false, new RemoveLock2());
