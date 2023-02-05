@@ -276,7 +276,7 @@ let rawMap2: RawTile[][] = [
 
 class Map {
   private map: Tile[][];
-  transform() {
+  constructor() {
     this.map = new Array(rawMap.length);
     for (let y = 0; y < rawMap.length; y++) {
       this.map[y] = new Array(rawMap[y].length);
@@ -333,7 +333,6 @@ class Map {
     }
   }
 }
-let map = new Map();
 function assertExhausted(x: never): never {
   throw new Error("Unexpected object: " + x);
 }
@@ -426,7 +425,7 @@ function gameLoop(map: Map) {
 }
 
 window.onload = () => {
-  map.transform();
+  let map = new Map();
   gameLoop(map);
 }
 
